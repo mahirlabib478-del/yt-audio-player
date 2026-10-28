@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101722" />
     <meta
       name="description"
-      content="A lightweight desktop audio player for local files and direct audio URLs."
+      content="A lightweight desktop player for local audio, direct audio URLs, and official YouTube playback."
     />
     <title>AudioLite</title>
   </head>
@@ -25,27 +25,27 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">YOUR SOURCE</p>
-            <h2 id="source-title">Play audio</h2>
+            <h2 id="source-title">Play media</h2>
           </div>
-          <span class="chip">No video renderer</span>
+          <span class="chip">Lightweight audio mode</span>
         </div>
 
         <form id="url-form" class="url-form">
-          <label for="audio-url">Direct audio URL</label>
+          <label for="audio-url">YouTube video or direct audio URL</label>
           <div class="url-row">
             <input
               id="audio-url"
               name="audio-url"
               type="url"
               inputmode="url"
-              placeholder="https://example.com/audio.mp3"
+              placeholder="https://youtube.com/watch?v=… or https://example.com/audio.mp3"
               autocomplete="url"
               spellcheck="false"
               required
             />
             <button class="button button-primary" type="submit">Play URL</button>
           </div>
-          <p class="field-help">Use a direct link to an audio file, such as MP3, WAV, OGG, or a browser-compatible stream.</p>
+          <p class="field-help">YouTube links open in YouTube’s official visible player. For audio-only playback, use a local audio file or a direct audio URL.</p>
         </form>
 
         <div class="separator"><span>OR</span></div>
@@ -65,7 +65,29 @@
         </div>
       </section>
 
-      <section class="player-card" aria-labelledby="player-title">
+
+      <section id="youtube-card" class="youtube-card" aria-labelledby="youtube-title" hidden>
+        <div class="youtube-heading">
+          <div>
+            <p class="eyebrow">YOUTUBE PLAYER</p>
+            <h2 id="youtube-title">Playing with YouTube</h2>
+          </div>
+          <a id="open-youtube" class="youtube-open-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">Open in YouTube ↗</a>
+        </div>
+        <div class="youtube-frame-wrap">
+          <iframe
+            id="youtube-frame"
+            title="YouTube video player"
+            src="about:blank"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <p id="youtube-status" class="status-message" role="status" aria-live="polite">YouTube’s official player will appear here.</p>
+      </section>
+
+      <section id="audio-player-card" class="player-card" aria-labelledby="player-title">
         <div class="now-playing">
           <div class="album-art" aria-hidden="true"><span>♫</span></div>
           <div class="track-copy">
@@ -104,7 +126,7 @@
 
       <footer class="app-footer">
         <span>Designed to stay simple and lightweight</span>
-        <span>Local files · Direct audio URLs</span>
+        <span>Local audio · Direct audio URLs · YouTube player</span>
       </footer>
     </main>
     <script type="module" src="/src/main.ts"></script>
