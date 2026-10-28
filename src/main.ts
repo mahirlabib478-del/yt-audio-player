@@ -116,7 +116,12 @@ urlForm.addEventListener("submit", async (event: SubmitEvent) => {
   }
 
   releaseObjectUrl();
-  const filename = decodeURIComponent(parsedUrl.pathname.split("/").pop() || "Remote audio");
+  let filename = parsedUrl.pathname.split("/").pop() || "Remote audio";
+  try {
+    filename = decodeURIComponent(filename);
+  } catch {
+    // Keep the original encoded name if the URL contains malformed escape sequences.
+  }
   loadSource(parsedUrl.href, filename, "Direct audio URL");
   await startPlayback();
 });
