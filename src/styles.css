@@ -530,3 +530,20 @@ h2 {
     flex-direction: column;
   }
 }
+
+
+.source-status {
+  min-height: 0;
+  margin: 10px 0 0;
+  color: #8fa1b5;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.source-status:empty {
+  display: none;
+}
+
+.source-status.is-error {
+  color: #ffb4a8;
+}
