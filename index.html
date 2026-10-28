@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101722" />
+    <meta
+      name="description"
+      content="A lightweight desktop audio player for local files and direct audio URLs."
+    />
+    <title>AudioLite</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand-mark" aria-hidden="true">♫</div>
+        <div>
+          <p class="eyebrow">LIGHTWEIGHT AUDIO PLAYER</p>
+          <h1>AudioLite</h1>
+        </div>
+        <span class="header-status"><span class="status-dot"></span> Ready</span>
+      </header>
+
+      <section class="source-card" aria-labelledby="source-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR SOURCE</p>
+            <h2 id="source-title">Play audio</h2>
+          </div>
+          <span class="chip">No video renderer</span>
+        </div>
+
+        <form id="url-form" class="url-form">
+          <label for="audio-url">Direct audio URL</label>
+          <div class="url-row">
+            <input
+              id="audio-url"
+              name="audio-url"
+              type="url"
+              inputmode="url"
+              placeholder="https://example.com/audio.mp3"
+              autocomplete="url"
+              spellcheck="false"
+              required
+            />
+            <button class="button button-primary" type="submit">Play URL</button>
+          </div>
+          <p class="field-help">Use a direct link to an audio file, such as MP3, WAV, OGG, or a browser-compatible stream.</p>
+        </form>
+
+        <div class="separator"><span>OR</span></div>
+
+        <div class="file-row">
+          <div class="file-copy">
+            <span class="file-icon" aria-hidden="true">♫</span>
+            <div>
+              <strong>Choose an audio file</strong>
+              <p>Play audio stored on this computer</p>
+            </div>
+          </div>
+          <label class="button button-secondary file-button" for="audio-file">
+            Browse files
+          </label>
+          <input id="audio-file" class="visually-hidden" type="file" accept="audio/*" />
+        </div>
+      </section>
+
+      <section class="player-card" aria-labelledby="player-title">
+        <div class="now-playing">
+          <div class="album-art" aria-hidden="true"><span>♫</span></div>
+          <div class="track-copy">
+            <p class="eyebrow">NOW PLAYING</p>
+            <h2 id="player-title">Nothing playing yet</h2>
+            <p id="source-description" class="track-subtitle">Choose a file or enter a direct audio URL</p>
+          </div>
+          <span id="playback-badge" class="playback-badge">IDLE</span>
+        </div>
+
+        <audio id="audio" preload="none"></audio>
+
+        <div class="timeline">
+          <label class="visually-hidden" for="seek">Seek through audio</label>
+          <input id="seek" class="range seek-range" type="range" min="0" max="1000" value="0" step="1" disabled />
+          <div class="time-row">
+            <span id="current-time">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <button id="stop-button" class="icon-button" type="button" aria-label="Stop playback" title="Stop">■</button>
+          <button id="play-button" class="play-button" type="button" aria-label="Play" title="Play" disabled>▶</button>
+          <div class="volume-control">
+            <span aria-hidden="true">♪</span>
+            <label class="visually-hidden" for="volume">Volume</label>
+            <input id="volume" class="range volume-range" type="range" min="0" max="1" value="0.8" step="0.01" />
+          </div>
+        </div>
+
+        <p id="status-message" class="status-message" role="status" aria-live="polite">
+          Ready when you are. Audio is loaded only when you choose a source.
+        </p>
+      </section>
+
+      <footer class="app-footer">
+        <span>Designed to stay simple and lightweight</span>
+        <span>Local files · Direct audio URLs</span>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
