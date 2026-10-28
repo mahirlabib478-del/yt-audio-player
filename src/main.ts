@@ -19,6 +19,7 @@ const youtubeCard = document.querySelector<HTMLElement>("#youtube-card")!;
 const youtubeFrame = document.querySelector<HTMLIFrameElement>("#youtube-frame")!;
 const youtubeStatus = document.querySelector<HTMLElement>("#youtube-status")!;
 const openYoutubeLink = document.querySelector<HTMLAnchorElement>("#open-youtube")!;
+const sourceStatus = document.querySelector<HTMLElement>("#source-status")!;
 
 let currentObjectUrl: string | null = null;
 let isSeeking = false;
@@ -26,6 +27,11 @@ let isSeeking = false;
 function setStatus(message: string, kind: "normal" | "error" = "normal"): void {
   statusMessage.textContent = message;
   statusMessage.classList.toggle("is-error", kind === "error");
+}
+
+function setSourceStatus(message: string, kind: "normal" | "error" = "normal"): void {
+  sourceStatus.textContent = message;
+  sourceStatus.classList.toggle("is-error", kind === "error");
 }
 
 function setBadge(label: string): void {
@@ -147,25 +153,27 @@ urlForm.addEventListener("submit", async (event: SubmitEvent) => {
   try {
     parsedUrl = new URL(rawUrl);
   } catch {
-    setStatus("Enter a valid URL.", "error");
+    setSourceStatus("Enter a valid URL.", "error");
     return;
   }
 
   if (!isHttpUrl(parsedUrl)) {
-    setStatus("Only HTTP and HTTPS audio URLs are supported.", "error");
+    setSourceStatus("Only HTTP and HTTPS URLs are supported.", "error");
     return;
   }
 
   if (isYouTubeUrl(parsedUrl)) {
     const videoId = getYouTubeVideoId(parsedUrl);
     if (!videoId) {
-      setStatus("Paste a direct YouTube video link, such as youtube.com/watch?v=… or youtu.be/… . Playlist and channel links are not supported here.", "error");
+      setSourceStatus("Paste a direct YouTube video link, such as youtube.com/watch?v=… or youtu.be/… . Playlist and channel links are not supported here.", "error");
       return;
     }
+    setSourceStatus("Loaded YouTube video in the official player.");
     showYouTubeMode(parsedUrl, videoId);
     return;
   }
 
+  setSourceStatus("");
   releaseObjectUrl();
   showAudioMode();
   let filename = parsedUrl.pathname.split("/").pop() || "Remote audio";
@@ -188,6 +196,7 @@ fileInput.addEventListener("change", async () => {
     return;
   }
 
+  setSourceStatus("");
   releaseObjectUrl();
   showAudioMode();
   currentObjectUrl = URL.createObjectURL(file);
