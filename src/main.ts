@@ -14,6 +14,11 @@ const playbackBadge = document.querySelector<HTMLElement>("#playback-badge")!;
 const statusMessage = document.querySelector<HTMLElement>("#status-message")!;
 const currentTimeElement = document.querySelector<HTMLElement>("#current-time")!;
 const durationElement = document.querySelector<HTMLElement>("#duration")!;
+const playerCard = document.querySelector<HTMLElement>("#audio-player-card")!;
+const youtubeCard = document.querySelector<HTMLElement>("#youtube-card")!;
+const youtubeFrame = document.querySelector<HTMLIFrameElement>("#youtube-frame")!;
+const youtubeStatus = document.querySelector<HTMLElement>("#youtube-status")!;
+const openYoutubeLink = document.querySelector<HTMLAnchorElement>("#open-youtube")!;
 
 let currentObjectUrl: string | null = null;
 let isSeeking = false;
@@ -47,6 +52,50 @@ function isYouTubeUrl(url: URL): boolean {
 
 function isHttpUrl(url: URL): boolean {
   return url.protocol === "https:" || url.protocol === "http:";
+}
+
+function getYouTubeVideoId(url: URL): string | null {
+  const host = url.hostname.toLowerCase().replace(/^www\./, "");
+  let candidate: string | null = null;
+
+  if (host === "youtu.be") {
+    candidate = url.pathname.split("/").filter(Boolean)[0] ?? null;
+  } else if (host === "youtube.com" || host.endsWith(".youtube.com") || host === "youtube-nocookie.com" || host.endsWith(".youtube-nocookie.com")) {
+    if (url.pathname === "/watch") {
+      candidate = url.searchParams.get("v");
+    } else {
+      const parts = url.pathname.split("/").filter(Boolean);
+      if (["shorts", "embed", "live", "v"].includes(parts[0] ?? "")) {
+        candidate = parts[1] ?? null;
+      }
+    }
+  }
+
+  return candidate && /^[a-zA-Z0-9_-]{11}$/.test(candidate) ? candidate : null;
+}
+
+function stopYouTubePlayback(): void {
+  youtubeFrame.src = "about:blank";
+  youtubeCard.hidden = true;
+}
+
+function showAudioMode(): void {
+  stopYouTubePlayback();
+  playerCard.hidden = false;
+}
+
+function showYouTubeMode(url: URL, videoId: string): void {
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
+  releaseObjectUrl();
+  resetTimeline();
+
+  playerCard.hidden = true;
+  youtubeCard.hidden = false;
+  openYoutubeLink.href = url.href;
+  youtubeStatus.textContent = "The video is playing in YouTube’s official player. Video and standard player controls remain visible.";
+  youtubeFrame.src = "https://www.youtube.com/embed/" + encodeURIComponent(videoId) + "?autoplay=1&playsinline=1";
 }
 
 function releaseObjectUrl(): void {
@@ -108,14 +157,17 @@ urlForm.addEventListener("submit", async (event: SubmitEvent) => {
   }
 
   if (isYouTubeUrl(parsedUrl)) {
-    setStatus(
-      "YouTube links cannot be converted to hidden audio by this app. Use YouTube's official player, or choose an audio file/direct audio source you have permission to play.",
-      "error",
-    );
+    const videoId = getYouTubeVideoId(parsedUrl);
+    if (!videoId) {
+      setStatus("Paste a direct YouTube video link, such as youtube.com/watch?v=… or youtu.be/… . Playlist and channel links are not supported here.", "error");
+      return;
+    }
+    showYouTubeMode(parsedUrl, videoId);
     return;
   }
 
   releaseObjectUrl();
+  showAudioMode();
   let filename = parsedUrl.pathname.split("/").pop() || "Remote audio";
   try {
     filename = decodeURIComponent(filename);
@@ -137,6 +189,7 @@ fileInput.addEventListener("change", async () => {
   }
 
   releaseObjectUrl();
+  showAudioMode();
   currentObjectUrl = URL.createObjectURL(file);
   loadSource(currentObjectUrl, file.name, "Local audio file");
   setStatus("Loaded " + file.name);
@@ -233,5 +286,6 @@ audio.volume = Number(volumeInput.value);
 
 window.addEventListener("beforeunload", () => {
   audio.pause();
+  stopYouTubePlayback();
   releaseObjectUrl();
 });
