@@ -28,7 +28,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "category": "AudioVideo",
+    "category": "Music",
     "shortDescription": "A lightweight desktop audio player",
     "longDescription": "Play local audio files and direct audio URLs in a simple desktop app."
   }
