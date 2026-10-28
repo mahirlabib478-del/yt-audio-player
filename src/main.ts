@@ -130,7 +130,7 @@ fileInput.addEventListener("change", async () => {
   const file = fileInput.files?.[0];
   if (!file) return;
 
-  if (!file.type.startsWith("audio/")) {
+  if (file.type && !file.type.startsWith("audio/")) {
     setStatus("Please choose a supported audio file.", "error");
     fileInput.value = "";
     return;
