@@ -35,6 +35,56 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm install
 
+      - name: Generate Windows application icon
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "src-tauri/icons" | Out-Null
+          Add-Type -AssemblyName System.Drawing
+
+          $bitmap = New-Object System.Drawing.Bitmap(64, 64, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+          $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+          $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+          $graphics.Clear([System.Drawing.Color]::FromArgb(16, 23, 34))
+
+          $accent = [System.Drawing.Color]::FromArgb(105, 224, 176)
+          $brush = New-Object System.Drawing.SolidBrush($accent)
+          $pen = New-Object System.Drawing.Pen($accent, 6)
+          $pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
+          $pen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
+          $graphics.DrawLine($pen, 40, 12, 40, 43)
+          $graphics.DrawLine($pen, 40, 12, 53, 9)
+          $graphics.FillEllipse($brush, 16, 39, 18, 12)
+          $graphics.FillEllipse($brush, 33, 43, 18, 12)
+
+          $pngStream = [System.IO.MemoryStream]::new()
+          $bitmap.Save($pngStream, [System.Drawing.Imaging.ImageFormat]::Png)
+          $pngBytes = $pngStream.ToArray()
+
+          $icoStream = [System.IO.MemoryStream]::new()
+          $writer = [System.IO.BinaryWriter]::new($icoStream)
+          $writer.Write([UInt16]0)
+          $writer.Write([UInt16]1)
+          $writer.Write([UInt16]1)
+          $writer.Write([byte]64)
+          $writer.Write([byte]64)
+          $writer.Write([byte]0)
+          $writer.Write([byte]0)
+          $writer.Write([UInt16]1)
+          $writer.Write([UInt16]32)
+          $writer.Write([UInt32]$pngBytes.Length)
+          $writer.Write([UInt32]22)
+          $writer.Write($pngBytes)
+          $writer.Flush()
+          [System.IO.File]::WriteAllBytes("src-tauri/icons/icon.ico", $icoStream.ToArray())
+
+          $writer.Dispose()
+          $icoStream.Dispose()
+          $pngStream.Dispose()
+          $pen.Dispose()
+          $brush.Dispose()
+          $graphics.Dispose()
+          $bitmap.Dispose()
+
       - name: Build the Windows desktop app
         run: npm run tauri -- build
 
