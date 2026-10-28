@@ -1,35 +1,36 @@
 # AudioLite
 
-A lightweight Windows desktop audio player built with Tauri, Rust, TypeScript, and Vite.
+A lightweight Windows desktop media player built with Tauri, Rust, TypeScript, and Vite.
 
-## Current MVP
+## Features
 
-- Play local audio files.
-- Play direct audio URLs when the source permits playback and serves a supported audio format.
-- Play, pause, stop, seek, and adjust volume.
-- Keep the interface intentionally simple: no video renderer, visualizer, or background polling.
-- Detect YouTube links and explain that this app does not extract or hide YouTube video streams. Use YouTube through its official player, or use an audio file/direct audio source you own or are permitted to play.
+- Play local audio files with a lightweight audio-only player.
+- Play direct audio URLs when the source allows playback and uses a supported format.
+- Paste a YouTube video link to open it in YouTube's official embedded player. The video and standard player controls remain visible.
+- Play, pause, stop, seek, and adjust volume for local/direct audio sources.
+- Switches back to the audio-only player for local files and direct audio URLs; the YouTube iframe is unloaded when leaving that mode.
 
-## Requirements
+## YouTube playback limitation
 
-- Node.js LTS
-- Rust toolchain
-- Microsoft C++ Build Tools on Windows
-- WebView2 Runtime (usually already installed on modern Windows)
+This app does not extract, isolate, or hide YouTube audio streams. YouTube links use the official visible YouTube player. Audio-only playback is available for local audio files and direct audio URLs that you have permission to use.
 
 ## Development
+
+Requirements: Node.js LTS, Rust, Microsoft C++ Build Tools on Windows, and WebView2 Runtime.
 
 ```powershell
 npm install
 npm run tauri dev
 ```
 
-## Production build
+## Windows installer
+
+The GitHub Actions workflow builds the Windows installer on each push to `main`. Download the `AudioLite-Windows-Installer` artifact from the workflow run's Artifacts section.
 
 ```powershell
-npm run tauri build
+npm run tauri -- build
 ```
 
-## Notes
+## Performance notes
 
-This project is an initial scaffold. CPU and RAM usage should be measured on the target computer; no fixed usage guarantee is made. Direct remote audio URLs may fail if the server blocks access, requires authentication, or does not provide a browser-compatible audio stream.
+The app avoids video rendering for local/direct audio sources and does not run background polling or visualizers. CPU and RAM usage must be measured on the target machine; no fixed usage guarantee is made. Embedded YouTube playback uses YouTube's player and therefore includes its own rendering and processing overhead.
