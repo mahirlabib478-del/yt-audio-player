@@ -62,8 +62,30 @@
           <label class="button button-secondary file-button" for="audio-file">
             Browse files
           </label>
-          <input id="audio-file" class="visually-hidden" type="file" accept="audio/*" />
+          <input
+            id="audio-file"
+            class="visually-hidden"
+            type="file"
+            accept="audio/*,.mp3,.wav,.ogg,.oga,.opus,.m4a,.aac,.flac,.wma"
+            multiple
+          />
         </div>
+
+        <section id="playlist-section" class="playlist-section" aria-labelledby="playlist-title" hidden>
+          <div class="playlist-heading">
+            <div>
+              <h3 id="playlist-title">Local playlist</h3>
+              <p id="playlist-count" class="playlist-count">0 tracks</p>
+            </div>
+            <div class="playlist-actions">
+              <button id="previous-track" class="button button-secondary playlist-nav" type="button" title="Previous track" aria-label="Previous track" disabled>⏮</button>
+              <button id="next-track" class="button button-secondary playlist-nav" type="button" title="Next track" aria-label="Next track" disabled>⏭</button>
+              <button id="clear-playlist" class="button button-secondary playlist-clear" type="button">Clear</button>
+            </div>
+          </div>
+          <ol id="playlist-list" class="playlist-list" aria-label="Selected local tracks"></ol>
+          <p class="field-help">Select multiple files to build a queue. Tracks play in order; choose any track to jump to it.</p>
+        </section>
       </section>
 
 
